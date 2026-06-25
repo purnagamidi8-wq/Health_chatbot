@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HealthLens · AI Health Awareness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --forest: #1A3D2B; --sage: #3D7A5C; --mint: #A8D5B5;
+      --cream: #F7F3EC;  --sand: #E8DFD0; --rust: #C8552A;
+      --text: #1A2820;   --muted: #5A7060;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); overflow-x: hidden; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 48px;
+      background: rgba(247,243,236,0.90); backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--sand);
+    }
+    .nav-logo { font-family: 'DM Serif Display', serif; font-size: 1.3rem; color: var(--forest); display: flex; align-items: center; gap: 8px; }
+    .nav-logo .dot { color: var(--rust); }
+    .nav-cta {
+      background: var(--forest); color: var(--cream);
+      border: none; border-radius: 50px; padding: 10px 26px;
+      font-family: 'DM Sans', sans-serif; font-size: 0.875rem; font-weight: 500;
+      cursor: pointer; text-decoration: none; display: inline-block;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .nav-cta:hover { background: var(--sage); transform: translateY(-1px); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; text-align: center;
+      padding: 130px 24px 80px; position: relative; overflow: hidden;
+    }
+    .blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.16; pointer-events: none; }
+    .blob-1 { width: 550px; height: 550px; background: var(--sage);  top: -120px; left: -180px; }
+    .blob-2 { width: 420px; height: 420px; background: var(--mint);  bottom: -40px; right: -120px; }
+    .blob-3 { width: 300px; height: 300px; background: var(--rust);  top: 45%; left: 58%; }
+
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--mint); color: var(--forest);
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase;
+      padding: 6px 18px; border-radius: 50px; margin-bottom: 28px;
+      animation: fadeDown 0.6s ease both;
+    }
+    .eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sage); }
+
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.8rem, 6vw, 5rem); line-height: 1.08;
+      color: var(--forest); max-width: 780px; margin-bottom: 24px;
+      animation: fadeDown 0.7s 0.1s ease both;
+    }
+    h1 em { color: var(--rust); font-style: italic; }
+
+    .hero-sub {
+      font-size: 1.1rem; color: var(--muted); max-width: 530px; line-height: 1.72;
+      margin-bottom: 44px; animation: fadeDown 0.7s 0.2s ease both;
+    }
+
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; animation: fadeDown 0.7s 0.3s ease both; }
+    .btn-primary {
+      background: var(--forest); color: var(--cream); border: none; border-radius: 50px;
+      padding: 16px 38px; font-size: 1rem; font-weight: 500; cursor: pointer;
+      text-decoration: none; display: inline-block;
+      box-shadow: 0 4px 20px rgba(26,61,43,0.25);
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+    .btn-primary:hover { background: var(--sage); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(26,61,43,0.3); }
+    .btn-outline {
+      background: transparent; color: var(--forest); border: 1.5px solid var(--sage);
+      border-radius: 50px; padding: 15px 32px; font-size: 1rem; font-weight: 500;
+      cursor: pointer; text-decoration: none; display: inline-block;
+      transition: background 0.18s;
+    }
+    .btn-outline:hover { background: var(--sand); }
+
+    /* Floating preview card */
+    .hero-visual { margin-top: 58px; animation: fadeDown 0.8s 0.4s ease both; position: relative; }
+    .visual-card {
+      background: white; border-radius: 20px; padding: 20px 24px;
+      box-shadow: 0 24px 60px rgba(26,61,43,0.14);
+      display: inline-flex; align-items: center; gap: 16px; max-width: 430px;
+    }
+    .visual-thumb {
+      width: 64px; height: 64px; border-radius: 14px;
+      background: linear-gradient(135deg, var(--mint), var(--sage));
+      display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0;
+    }
+    .visual-text { text-align: left; }
+    .visual-text strong { display: block; font-size: 0.9rem; color: var(--forest); margin-bottom: 5px; }
+    .visual-text span { font-size: 0.8rem; color: var(--muted); line-height: 1.55; }
+    .visual-badge {
+      position: absolute; top: -10px; right: -10px;
+      background: var(--rust); color: white; font-size: 0.7rem; font-weight: 700;
+      padding: 4px 11px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.06em;
+    }
+
+    /* FEATURES */
+    .features { padding: 100px 24px; max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      text-align: center; font-size: 0.73rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--sage); margin-bottom: 14px;
+    }
+    .features h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      text-align: center; color: var(--forest); margin-bottom: 60px;
+      max-width: 560px; margin-left: auto; margin-right: auto;
+    }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 22px; }
+    .card {
+      background: white; border-radius: 18px; padding: 30px 26px;
+      border: 1px solid var(--sand);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(26,61,43,0.1); }
+    .card-icon {
+      font-size: 2rem; width: 54px; height: 54px; border-radius: 14px;
+      background: var(--cream); display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
+    }
+    .card h3 { font-size: 1.05rem; font-weight: 600; color: var(--forest); margin-bottom: 10px; }
+    .card p  { font-size: 0.875rem; color: var(--muted); line-height: 1.65; }
+
+    /* DISCLAIMER */
+    .disc-wrap { padding: 0 24px 100px; max-width: 800px; margin: 0 auto; }
+    .disclaimer-banner {
+      background: #FEF3EE; border: 1px solid #F5C4AE; border-radius: 18px;
+      padding: 28px 32px; display: flex; gap: 16px; align-items: flex-start;
+    }
+    .disc-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 2px; }
+    .disclaimer-banner h4 { font-size: 0.95rem; font-weight: 600; color: var(--rust); margin-bottom: 6px; }
+    .disclaimer-banner p  { font-size: 0.85rem; color: #7A4030; line-height: 1.65; }
+
+    /* CTA */
+    .cta-section { text-align: center; padding: 80px 24px 120px; background: var(--forest); }
+    .cta-section h2 { font-family: 'DM Serif Display', serif; font-size: clamp(1.8rem, 3vw, 2.6rem); color: var(--cream); margin-bottom: 14px; }
+    .cta-section p { color: var(--mint); font-size: 1rem; margin-bottom: 36px; }
+    .btn-light {
+      background: var(--cream); color: var(--forest); border: none; border-radius: 50px;
+      padding: 16px 42px; font-size: 1rem; font-weight: 600; cursor: pointer;
+      text-decoration: none; display: inline-block; transition: background 0.2s, transform 0.15s;
+    }
+    .btn-light:hover { background: var(--mint); transform: translateY(-2px); }
+
+    footer { text-align: center; padding: 22px; font-size: 0.78rem; color: var(--muted); border-top: 1px solid var(--sand); }
+
+    /* Powered by badge */
+    .powered {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #E8F0FE; color: #1A56DB;
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em;
+      padding: 4px 12px; border-radius: 20px; margin-left: 10px;
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @media (max-width: 620px) {
+      nav { padding: 13px 18px; }
+      .visual-card { flex-direction: column; text-align: center; max-width: 300px; }
+      .disclaimer-banner { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">🌿 HealthLens<span class="dot">.</span></div>
+  <a href="/chat" class="nav-cta">Open Assistant →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <div class="eyebrow"><span class="eyebrow-dot"></span> Powered by Google Gemini AI</div>
+
+  <h1>Understand your health,<br><em>informed by AI</em></h1>
+
+  <p class="hero-sub">
+    Ask questions about diseases, symptoms, and prevention —
+    or <strong>upload an image</strong> for visual health analysis.
+    Always backed by clear guidance to consult a professional.
+  </p>
+
+  <div class="hero-actions">
+    <a href="/chat" class="btn-primary">Start a Conversation →</a>
+    <a href="#features" class="btn-outline">See What It Does</a>
+  </div>
+
+  <div class="hero-visual">
+    <div class="visual-card">
+      <div class="visual-thumb">🔬</div>
+      <div class="visual-text">
+        <strong>Image Analysis Ready</strong>
+        <span>Upload a photo of a rash, report, or food label — get instant health awareness insights powered by Gemini Vision.</span>
+      </div>
+    </div>
+    <div class="visual-badge">✦ NEW</div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <p class="section-label">What HealthLens Does</p>
+  <h2>Everything you need for health awareness</h2>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">💬</div>
+      <h3>Ask Anything</h3>
+      <p>Type your health questions in plain language. Get clear, compassionate answers about diseases, symptoms, and prevention strategies.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🖼️</div>
+      <h3>Image Analysis</h3>
+      <p>Upload a photo — skin conditions, rashes, medical reports, food packaging — and receive AI-powered health awareness insights via Gemini Vision.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🛡️</div>
+      <h3>Prevention First</h3>
+      <p>Learn evidence-based prevention tips and healthy lifestyle habits before issues arise. Knowledge is your first line of defense.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🚨</div>
+      <h3>Emergency Guidance</h3>
+      <p>When something urgent comes up, HealthLens always directs you to emergency services and the right professionals immediately.</p>
+    </div>
+  </div>
+</section>
+
+<!-- DISCLAIMER -->
+<div class="disc-wrap">
+  <div class="disclaimer-banner">
+    <div class="disc-icon">⚠️</div>
+    <div>
+      <h4>Important Disclaimer</h4>
+      <p>HealthLens provides <strong>general health awareness information only</strong> — not medical advice, diagnosis, or treatment. All information is for educational purposes. Always consult a qualified healthcare professional for personal medical decisions. In an emergency, call your local emergency number immediately.</p>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Ready to learn about your health?</h2>
+  <p>Start a conversation or upload an image — it only takes a second.</p>
+  <a href="/chat" class="btn-light">Open HealthLens Assistant →</a>
+</section>
+
+<footer>
+  © 2025 HealthLens · Powered by Google Gemini · Not a substitute for medical advice
+</footer>
+
+</body>
+</html>
